@@ -1,70 +1,105 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { useState } from 'react'
+import { green } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
+import { View, Text, Image, Button, StyleSheet, Alert } from 'react-native';
+import {SafeAreaView, TextInput, TouchableOpacity} from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const index: React.FC = () => {
 
-export default function HomeScreen() {
+  const [name, setName] = useState<string>('');
+  const [zipcode, setZipcode] = useState<string>('');
+
+  const handleNameChange = (text: string) => {
+    setName(text);
+  };
+
+  const handleZipcodeChange = (text: string) => {
+    setZipcode(text);
+  };
+
+  const validateName = (name: string): boolean => {
+    // Check if the name is not empty and only contains letters and spaces
+    const namePattern = /^[A-Za-z\s]+$/;
+    return namePattern.test(name.trim());
+  };
+
+  const validateZipcode = (zipcode: string): boolean => {
+    // Check if the zipcode is exactly 5 digits
+    const zipcodePattern = /^[0-9]{5}$/;
+    return zipcodePattern.test(zipcode.trim());
+  };
+
+  const validateInputs = () => {
+    if (!validateName(name)) {
+      Alert.alert('Error', 'Name must contain only letters and spaces, and cannot be empty.');
+      return;
+    }
+
+    if (!validateZipcode(zipcode)) {
+      Alert.alert('Error', 'Please enter a valid 5-digit zipcode.');
+      return;
+    }
+
+    Alert.alert('Success', `Name: ${name}\nZipcode: ${zipcode}`);
+  };
+
+
+
+  const handleSearch = () => {
+    // Perform search action
+    if (name.trim() === '' || zipcode.trim() === '') {
+      Alert.alert('Error', 'Both fields must be filled in to search');
+      return;
+    }
+
+    // Here, you can implement the actual search logic, like calling an API
+    Alert.alert('Searching...', `Searching for ${name} in zipcode ${zipcode}`);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <Text style={styles.label}>Enter Name:</Text>
+      <TextInput
+        style={styles.input}
+        value={name}
+        onChangeText={handleNameChange}
+        placeholder="John Doe"
+        autoCapitalize='words'
+      />
+
+      <Text style={styles.label}>Enter Zipcode:</Text>
+      <TextInput
+        style={styles.input}
+        value={zipcode}
+        onChangeText={handleZipcodeChange}
+        keyboardType="numeric"
+        placeholder="12345"
+        maxLength={5}
+      />
+
+      
+      <Button title="Search" onPress={handleSearch} color="#007BFF" />
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
   },
-  stepContainer: {
-    gap: 8,
+  label: {
+    fontSize: 16,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingHorizontal: 8,
   },
 });
+
+export default index
